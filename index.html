@@ -3260,7 +3260,6 @@ function resolveCard(c) {
         setTimeout(() => {
           if (!B || f.hp <= 0) return;
           elementFX(el, f.x, f.y - f.h * .4);
-          addPop(f.x, f.y - f.h * .75, c.name, '#ffe9a8', .8);
           dealDmg(f, c.val);
         }, T(k * 130));
       });
