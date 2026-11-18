@@ -1085,7 +1085,7 @@ const CARDS = [
   { id: 'r_priest', name: '성직자 리라', rare: '희귀', cond: 'le12', uses: 2, eff: 'heal', val: 9, fig: 'humanoid', w: 'staff', hat: 'hood', c1: '#ffe9a8', c2: '#fffbe8', c3: '#8a6a20', el: 'holy', desc: '12 이하 젬. 체력 9 회복.' },
   { id: 'r_shadow', name: '그림자 도적', rare: '희귀', cond: 'odd', uses: 2, eff: 'pierce', val: 8, fig: 'humanoid', w: 'dagger', hat: 'hood', c1: '#7a5aa8', c2: '#c8b0ff', c3: '#241a3a', el: 'shadow', desc: '홀수 젬. 방어 무시 8 피해.' },
   { id: 'r_storm', name: '번개 술사', rare: '희귀', cond: 'ge8', uses: 2, eff: 'all', val: 6, fig: 'humanoid', w: 'staff', hat: 'wizard', c1: '#7ab8ff', c2: '#e0f0ff', c3: '#1a3a7a', el: 'bolt', desc: '8 이상 젬. 모든 적에게 6 피해.' },
-  { id: 'r_gem', name: '젬 전문가 미나', rare: '희귀', cond: 'any', uses: 3, eff: 'reroll', val: 2, fig: 'humanoid', w: 'none', hat: 'hood', c1: '#5ae0c8', c2: '#d0fff8', c3: '#1a5a52', el: 'arcane', desc: '젬 2장을 다시 뽑는다.' },
+  { id: 'r_gem', name: '마나 조율사 미나', rare: '희귀', cond: 'any', uses: 3, eff: 'reroll', val: 2, fig: 'humanoid', w: 'none', hat: 'hood', c1: '#5ae0c8', c2: '#d0fff8', c3: '#1a5a52', el: 'arcane', desc: '젬 2장을 다시 뽑는다.' },
   { id: 'r_doll', name: '저주받은 인형', rare: '희귀', cond: 'le4', uses: 2, eff: 'poison', val: 4, fig: 'ghost', c1: '#c88ad0', c2: '#f0d0f8', c3: '#4a1a5a', el: 'shadow', desc: '4 이하 젬. 독 4를 3턴 부여.' },
   { id: 'r_twin', name: '쌍검 용병', rare: '희귀', cond: 'pairsuit', uses: 2, eff: 'dmg', val: 10, fig: 'humanoid', w: 'dagger', hat: 'none', c1: '#e0a05a', c2: '#ffe0b0', c3: '#6a3a18', el: 'fire', desc: '같은 모양 젬 2장. 단일 10 피해.' },
 
@@ -1234,7 +1234,7 @@ const FOE_DATA = {
 const RIVALS = [
   { name: '카드 견습생 루카', tier: '브론즈', hp: 110, atk: 6, deck: ['c_slime', 'c_rat', 'c_guard', 'c_archer', 'c_herb', 'c_candle'], face: 'knight' },
   { name: '떠돌이 검객 하론', tier: '브론즈', hp: 150, atk: 8, deck: ['c_guard', 'c_farmer', 'c_archer', 'r_spear', 'c_golem', 'r_wind'], face: 'knight' },
-  { name: '젬 도박사 베가', tier: '실버', hp: 200, atk: 10, deck: ['r_gem', 'c_candle', 'r_storm', 'r_twin', 'c_merchant', 'r_earth'], face: 'imp' },
+  { name: '마나 도박사 베가', tier: '실버', hp: 200, atk: 10, deck: ['r_gem', 'c_candle', 'r_storm', 'r_twin', 'c_merchant', 'r_earth'], face: 'imp' },
   { name: '서리 마법사 유키', tier: '실버', hp: 250, atk: 13, deck: ['r_ice', 'e_frost', 'r_priest', 'r_storm', 'e_runes', 'r_earth'], face: 'ghost' },
   { name: '그림자 상인 무영', tier: '골드', hp: 320, atk: 16, deck: ['e_assassin', 'r_shadow', 'e_gold', 'r_gem', 'e_reaper', 'l_abyss'], face: 'ghost' },
   { name: '폭풍 기사 카이', tier: '골드', hp: 390, atk: 19, deck: ['e_inferno', 'e_stormlord', 'e_paladin', 'l_terra', 'e_runes', 'r_spear'], face: 'knight' },
@@ -3126,6 +3126,8 @@ function newBattle(cfg) {
   });
   B.boss = B.foes.some(f => f.boss);
   const cut = $('exCut'); if (cut) cut.classList.remove('on');
+  hideBattleBanners();
+  updateChain();
   startTurn(true);
   if (B.boss) {
     const b = B.foes.find(f => f.boss);
