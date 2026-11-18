@@ -479,10 +479,10 @@ canvas{display:block}
 .gcard .gback canvas{width:100%;height:100%;display:block}
 .gcard .gback i{display:none}
 .gcard .gface canvas{width:100%;height:100%;display:block}
-.gcard .gglow{position:absolute;inset:-6px;border-radius:16px;pointer-events:none;opacity:0;transition:opacity .4s;
-  box-shadow:0 0 26px var(--gc,#fff),0 0 60px var(--gc,#fff);z-index:-1}
-.gcard.flipped .gglow{opacity:.85}
-.gcard.flipped .gfront{box-shadow:0 0 26px var(--gc,#fff),0 0 60px var(--gc,#fff)}
+.gcard .gglow{position:absolute;inset:-4px;border-radius:15px;pointer-events:none;opacity:0;transition:opacity .4s;
+  box-shadow:0 0 14px var(--gc,#fff);z-index:-1}
+.gcard.flipped .gglow{opacity:.5}
+.gcard.flipped .gfront{box-shadow:0 0 16px var(--gc,#fff)}
 .gcard.legend .gfront,.gcard.myth .gfront{animation:legendShake .5s .35s}
 @keyframes legendShake{0%,100%{transform:rotateY(180deg)}30%{transform:rotateY(180deg) translateX(-4px)}60%{transform:rotateY(180deg) translateX(4px)}}
 .gcard .gnew{position:absolute;left:4px;bottom:4px;font-size:8.5px;font-weight:900;background:linear-gradient(180deg,#ff7a9a,#e01f45);
@@ -3158,8 +3158,8 @@ function dealDmg(foe, amount, opts) {
   }
   foe.hp = Math.max(0, foe.hp - dmg);
   foe.flash = 1; foe.knock = 1;
-  addPop(foe.x, foe.y - foe.h * .74, '-' + dmg, crit ? '#ffe9a8' : '#ff8090', crit ? 1.6 : 1, crit);
-  if (crit) { addPop(foe.x, foe.y - foe.h * .9, 'CRITICAL!', '#ffd54a', 1.15, true); flash('#ffd9a0', .5); shake(12); SFX.crit(); }
+  addPop(foe.x, foe.y - foe.h * .74, '-' + dmg, crit ? '#ffe9a8' : '#ff8090', crit ? 1.45 : 1, crit);
+  if (crit) { flash('#ffd9a0', .5); shake(12); SFX.crit(); }
   else { shake(3 + Math.min(7, dmg * .18)); SFX.hit(); }
   flash('#ff5a6e', .14);
   if (foe.hp <= 0 && !foe.dying) {
@@ -3768,7 +3768,7 @@ function drawBattle(t) {
     g.restore();
     if (dead) return;
     // 이름 + HP 바
-    const maxW = B.foes.length >= 3 ? W * .21 : B.foes.length === 2 ? W * .26 : W * .4;
+    const maxW = B.foes.length >= 3 ? W * .2 : B.foes.length === 2 ? W * .23 : W * .38;
     const bw = Math.max(44, Math.min(f.h * .72, maxW)), bx = f.x + lunge - bw / 2, by = f.y - f.h * (f.top + .14) + (i % 2 ? 4 : 0);
     g.save();
     g.fillStyle = 'rgba(3,2,8,.62)'; rr(g, bx - 5, by - 4, bw + 10, 25, 7); g.fill();
@@ -3893,6 +3893,13 @@ function drawBattle(t) {
     g.strokeStyle = 'rgba(0,0,0,.9)'; g.lineWidth = 4.5;
     g.strokeText(p.text, 0, 0);
     g.fillStyle = p.col; g.fillText(p.text, 0, 0);
+    if (p.crit) {
+      g.font = '900 ' + Math.round(Math.max(8, B.vh * .019) * p.size) + 'px ' + FONT;
+      g.strokeStyle = 'rgba(0,0,0,.9)'; g.lineWidth = 3;
+      g.strokeText('CRITICAL', 0, -Math.round(Math.max(14, B.vh * .036) * p.size));
+      g.fillStyle = '#ffd54a';
+      g.fillText('CRITICAL', 0, -Math.round(Math.max(14, B.vh * .036) * p.size));
+    }
     if (p.crit) { g.fillStyle = '#fff'; g.globalAlpha = a * .5; g.fillText(p.text, 0, -1); }
     g.restore();
   });
@@ -4083,9 +4090,13 @@ function drawCine(now) {
     const bw = Math.min(W * .16, 96) * grow;
     const pillar = g.createLinearGradient(cx - bw * 2.4, 0, cx + bw * 2.4, 0);
     pillar.addColorStop(0, hexA(aura, 0));
-    pillar.addColorStop(.34, hexA(aura, .35 * fade));
-    pillar.addColorStop(.5, hexA('#ffffff', .92 * fade));
-    pillar.addColorStop(.66, hexA(aura, .35 * fade));
+    pillar.addColorStop(.22, hexA(aura, .10 * fade));
+    pillar.addColorStop(.36, hexA(aura, .30 * fade));
+    pillar.addColorStop(.45, hexA(aura, .55 * fade));
+    pillar.addColorStop(.5, hexA('#ffffff', .95 * fade));
+    pillar.addColorStop(.55, hexA(aura, .55 * fade));
+    pillar.addColorStop(.64, hexA(aura, .30 * fade));
+    pillar.addColorStop(.78, hexA(aura, .10 * fade));
     pillar.addColorStop(1, hexA(aura, 0));
     g.fillStyle = pillar;
     g.fillRect(cx - bw * 2.4, 0, bw * 4.8, H);
@@ -4209,7 +4220,7 @@ function cineRevealStage() {
     const d = document.createElement('div');
     d.className = 'gcard' + (R.order >= 3 ? ' legend' : '') + (R.order >= 4 ? ' myth' : '');
     d.dataset.i = i;
-    d.style.setProperty('--gc', R.aura || R.color);
+    d.style.setProperty('--gc', R.color);
     d.style.animation = 'cardUp .4s ' + (i * .05) + 's backwards';
     const back = document.createElement('div'); back.className = 'gface gback';
     const bcv = document.createElement('canvas'); bcv.width = 220; bcv.height = 300;
