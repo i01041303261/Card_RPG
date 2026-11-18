@@ -3210,6 +3210,7 @@ function useCardAt(i) {
   renderGems(); renderHand(); updateHud();
   if (typeof TUT !== 'undefined' && TUT.active) tutHook('card');
   if (!B || B.phase !== 'play') return;
+  if (!aliveFoes().length) { setTimeout(() => { if (B && B.phase !== 'end') win(); }, T(650)); return; }
   if (!B.hand.length) setTimeout(() => { if (B && B.phase === 'play') endTurn(); }, T(700));
   else if (B.gems.every((g, k) => B.usedGems[k])) setTimeout(() => { if (B && B.phase === 'play') endTurn(); }, T(650));
 }
@@ -3298,7 +3299,7 @@ function resolveCard(c) {
         addPop(t0.x, t0.y - t0.h * .8, 'STUN', '#bfeaff', 1.1);
         addParts(t0.x, t0.y - t0.h * .5, '#bfeaff', 18, 'shard');
         SFX.stun();
-        if (t0.hp > 0) { t0.pendingAct = null; logMsg(t0.name + ' 행동 지연'); }
+        if (t0.hp > 0) { t0.pendingAct = null; t0.stunned = 1; logMsg(t0.name + ' 행동 불가'); }
       }
       break;
     }
@@ -3370,6 +3371,14 @@ function endTurn() {
     if (idx >= list.length) { finishEnemy(); return; }
     const f = list[idx++];
     if (f.hp <= 0) { step(); return; }
+    if (f.stunned) {
+      f.stunned = 0; f.pendingAct = null;
+      addPop(f.x, f.y - f.h * .5, '기절', '#bfeaff', 1.05);
+      addParts(f.x, f.y - f.h * .4, '#bfeaff', 10, 'shard');
+      SFX.stun();
+      setTimeout(step, T(420));
+      return;
+    }
     foeAct(f, () => setTimeout(step, T(300)));
   };
   setTimeout(step, T(420));
@@ -4382,6 +4391,8 @@ function gachaPullShard() {
 
 /* ── 스타터팩 (온보딩) ── */
 function giveStarterPack() {
+  if (typeof TUT !== 'undefined') { TUT.active = false; TUT.clearTimer && TUT.clearTimer(); }
+  const gb = document.getElementById('guideBox'); if (gb) gb.innerHTML = '';
   const m = modal('<div class="pack-scene"><h2>스타터팩</h2><p class="center">무한의 군주가 떨어뜨린 첫 가방이 열린다…</p>' +
     '<div class="pack" id="packEl"><div class="seal">🃏</div><div class="pname">STARTER PACK</div></div>' +
     '<p class="center tiny muted">탭해서 개봉</p></div>', { lock: 1 });
