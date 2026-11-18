@@ -3190,6 +3190,7 @@ function playableCards() {
   return out;
 }
 function cardsReady2() { return playableCards().length > 0 || B.player.od >= 100; }
+function aliveFoes() { return B ? B.foes.filter(f => f.hp > 0) : []; }
 function curTarget() {
   if (!B) return null;
   const al = aliveFoes();
